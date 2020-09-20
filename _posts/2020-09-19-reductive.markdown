@@ -8,7 +8,7 @@ The reduce method is a powerful tool built into vanilla Javascript that can do a
 
 Broadly speaking, a reducer is a logic tool that distills a refined data point from a larger data set. If the data set is a stew, the reducer is the stovetop which will "boil it down" to a more refined product. Different languages approach this concept in slightly different ways. In Javascript, a reducer looks like this:
 
-{% highlight javascript}	
+```
 
 const array = [1, 4, 8, 5]
 const reducer = (accumulator, currentValue) => accumulator + currentValue
@@ -17,7 +17,7 @@ console.log(array.reduce(reducer))
 
 output: 18
 
-{% endhighlight %}
+```
 
 What's happening here is very interesting. I am calling the reduce method on my array, and then I am passing my custom reducer function to the reduce method. What's interesting about this is that my custom reducer can be basically anything. In this case, I'm just summming each entry with the accumulator's current value. In short, I'm summing the array. The nature of the reduce method saves the result of this expression in the accumulator variable for the next pass of the array, so all I have to do is decide what will be done upon each visit to an entry in the array. You might have already guessed, but this means that I can use reduce whenever I want. I could always use reduce! Who needs map anyway? But this is, of course, a trap.
 
