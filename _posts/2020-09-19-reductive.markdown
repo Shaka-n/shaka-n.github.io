@@ -4,7 +4,7 @@ title:  "Reductive"
 date:   2020-09-19 12:12:01 -0400
 categories: Javascript
 ---
-IThe reduce method is a powerful tool built into vanilla Javascript that can do a lot of heavy lifting for a software developer. Knowing how to use it can distinguish an experienced programmer from her less experienced peers. However, reduce is not as straightforward to use  as the other enumerators built into vanilla JS. Few problems actually call for it, and using reduce unnecessarily can prove to be far more trouble than it's worth. If we're going to understand how to use reduce, we first need to understand what it is and when it is best employed. 
+The reduce method is a powerful tool built into vanilla Javascript that can do a lot of heavy lifting for a software developer. Knowing how to use it can distinguish an experienced programmer from her less experienced peers. However, reduce is not as straightforward to use  as the other enumerators built into vanilla JS. Few problems actually call for it, and using reduce unnecessarily can prove to be far more trouble than it's worth. If we're going to understand how to use reduce, we first need to understand what it is and when it is best employed. 
 
 Broadly speaking, a reducer is a logic tool that distills a refined data point from a larger data set. If the data set is a stew, the reducer is the stovetop which will "boil it down" to a more refined product. Different languages approach this concept in slightly different ways. In Javascript, a reducer looks like this:
 
