@@ -29,7 +29,7 @@ twitter_username: GarenSahagian
 github_username:  Shaka-n
 
 # Build settings
-theme: minima
+theme: no-style-please
 plugins:
   - jekyll-feed
 
