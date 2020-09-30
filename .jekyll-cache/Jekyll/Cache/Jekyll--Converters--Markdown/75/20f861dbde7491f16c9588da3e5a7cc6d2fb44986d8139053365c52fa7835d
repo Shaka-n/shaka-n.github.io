@@ -1,0 +1,2 @@
+I"7<p>The reduce method is a powerful tool built into vanilla Javascript that can do a lot of heavy lifting for a software developer. Knowing how to use it can distinguish an experienced programmer from her less experienced peers. However, reduce is not as straightforward to use  as the other enumerators built into vanilla JS. Few problems actually call for it, and using reduce unnecessarily can prove to be far more trouble than it’s worth. If we’re going to understand how to use reduce, we first need to understand what it is and when it is best employed.</p>
+:ET
