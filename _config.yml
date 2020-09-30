@@ -30,7 +30,7 @@ github_username:  Shaka-n
 
 # Build settings
 # theme: minima
-theme: jekyll-theme-dinky
+theme: jekyll-theme-slate
 plugins:
   - jekyll-feed
 
