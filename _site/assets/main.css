@@ -194,3 +194,8 @@ table td { border: 1px solid #e8e8e8; }
 .highlight .vg { color: #008080; }
 .highlight .vi { color: #008080; }
 .highlight .il { color: #099; }
+
+.home--about { display: flex; margin-bottom: 2rem; }
+.home--about img { position: absolute; left: 4rem; border-radius: 50%; width: 200px; min-width: 200px; }
+.home--about__desc { margin: 2rem 0; }
+.home--portfolio { margin: 2rem 0; }

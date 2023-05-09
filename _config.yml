@@ -18,11 +18,10 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Small Bites Blog
+title: Stefan Sahagian
 email: g.s.sahagian@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-  This is a place for me to think out loud about code and technology 
-  and also a place for me to fulfill my duties to my erstwhile code bootcamp.
+  This is my personal website and blog. Here I write about coding and personal projects.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: GarenSahagian
@@ -32,6 +31,9 @@ github_username:  Shaka-n
 theme: minima
 plugins:
   - jekyll-feed
+
+minima:
+  skin: dark
 
 # Exclude from processing.
 # The following items will not be processed, by default.

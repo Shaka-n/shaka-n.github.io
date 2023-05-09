@@ -1,0 +1,28 @@
+---
+---
+@import "minima";
+
+
+.home {
+    &--about {
+        display: flex;
+        margin-bottom: 2rem;
+        
+        img {
+            position: absolute;
+            left: 4rem;
+            border-radius: 50%;
+            width: 200px;
+            min-width: 200px;
+
+        }
+
+        &__desc {
+            margin: 2rem 0;
+        }
+    }
+
+    &--portfolio {
+        margin: 2rem 0;
+    }
+}
