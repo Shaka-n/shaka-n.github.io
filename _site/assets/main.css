@@ -196,6 +196,7 @@ table td { border: 1px solid #e8e8e8; }
 .highlight .il { color: #099; }
 
 .home--about { display: flex; margin-bottom: 2rem; }
-.home--about img { position: absolute; left: 4rem; border-radius: 50%; width: 200px; min-width: 200px; }
-.home--about__desc { margin: 2rem 0; }
+.home--about__avatar { width: 200px; min-width: 200px; margin-right: 2rem; }
+.home--about__avatar img { border-radius: 50%; }
+.home--about__desc { margin: 0 2rem 0 0; }
 .home--portfolio { margin: 2rem 0; }

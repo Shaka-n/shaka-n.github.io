@@ -8,17 +8,20 @@
         display: flex;
         margin-bottom: 2rem;
         
-        img {
-            position: absolute;
-            left: 4rem;
-            border-radius: 50%;
+        &__avatar {
+            // position: absolute;
+            // left: 4rem;
             width: 200px;
             min-width: 200px;
+            margin-right: 2rem;
 
+            img {
+                border-radius: 50%;
+            }
         }
 
         &__desc {
-            margin: 2rem 0;
+            margin: 0 2rem 0 0;
         }
     }
 
