@@ -2,30 +2,61 @@
 ---
 @import "minima";
 
+$small: 480px;
 
 .home {
     &--about {
         display: flex;
         margin-bottom: 2rem;
-        
-        &__avatar {
-            // position: absolute;
-            // left: 4rem;
-            width: 200px;
-            min-width: 200px;
-            margin-right: 2rem;
-
-            img {
-                border-radius: 50%;
-            }
-        }
 
         &__desc {
-            margin: 0 2rem 0 0;
+            p:nth-of-type(1){
+                padding-top: 2rem;
+            }
+            img {
+                margin-right: 3rem;
+                width: 250px;
+                min-width: 200px;
+                float: left;
+                -webkit-shape-outside:circle();
+                shape-outside: circle();
+            }
+            @media (max-width: 480px) {
+                p:nth-of-type(1){
+                    padding-top: 0;
+                }
+                img {
+                    float: none;
+                    width: 100%;
+                    min-width: 200px;
+                    -webkit-shape-outside:circle();
+                    shape-outside: circle();
+                    margin-bottom: 1rem;
+                } 
+            }
+
         }
     }
 
     &--portfolio {
         margin: 2rem 0;
     }
+}
+
+@media screen and (max-width: $small) {
+
+.home {
+        &__desc {
+            img {
+                width: 200px;
+                min-width: 200px;
+                -webkit-shape-outside:circle();
+                shape-outside: circle();
+            }
+        }
+        &--portfolio {
+            margin: 2rem 0;
+        }
+    }
+
 }
