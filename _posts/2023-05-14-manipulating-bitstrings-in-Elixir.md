@@ -19,7 +19,7 @@ In this example we are both prepending and appending bitstring literals to the o
 <<0b011::3, 0b110::3, 0b001::3, 0b000::3>>
 ```
 
-You'll notice that there are more than 8 bits in this intermediate representation. Since we obviously cannot have more than 8 bits in a bitstring, we need to do something with the extra bits. Elixir will take the first 8 bits provided and return them as an integer(i.e. 120). The remaining bits will be returned as a bitstring literal, using the verbose syntax (i.e. 8::size(4)). Taking it further, what happens if we have many more bits? 
+You'll notice that there are more than 8 bits in this intermediate representation. Since we obviously cannot have more than 8 bits in a bitstring, we need to do something with the extra bits. Elixir will take the first 8 bits provided and return them as an integer(i.e. 120). The reason for this is that a bitstring comprised of 8-bytes is what is called a binary, and is treated differently than other bitstrings. Put in the official terms, a binary is a bitstring that is divisible by 8. All binaries are bitstrings, but not all bitstrings are binaries. The remaining bits from out intermediate representation will be returned as a bitstring literal, using the verbose syntax (i.e. 8::size(4)). Taking it further, what happens if we have many more bits? 
 
 ```
 <<0b011::3, 0b110::3, 0b001::3, 0b000::3, 0b001::3, 0b010::3>>
