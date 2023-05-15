@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Developing a Personal Project, Part 3: Planning | Stefan Sahagian</title>
+<meta name="generator" content="Jekyll v3.9.3" />
+<meta property="og:title" content="Developing a Personal Project, Part 3: Planning" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In the last part of this series I discussed in brief my thoughts on the research process. Upon reflection, I realize that that topic deserves a more in-depth discussion, but hopefully it at least gave you an idea of my approach and thought process. In this latest post I will be discussing the last “administrative” step before actually getting into the code: planning." />
+<meta property="og:description" content="In the last part of this series I discussed in brief my thoughts on the research process. Upon reflection, I realize that that topic deserves a more in-depth discussion, but hopefully it at least gave you an idea of my approach and thought process. In this latest post I will be discussing the last “administrative” step before actually getting into the code: planning." />
+<link rel="canonical" href="http://localhost:4000/general/2023/05/15/developing-a-personal-project-part-3.html" />
+<meta property="og:url" content="http://localhost:4000/general/2023/05/15/developing-a-personal-project-part-3.html" />
+<meta property="og:site_name" content="Stefan Sahagian" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-05-15T00:00:00-04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Developing a Personal Project, Part 3: Planning" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-05-15T00:00:00-04:00","datePublished":"2023-05-15T00:00:00-04:00","description":"In the last part of this series I discussed in brief my thoughts on the research process. Upon reflection, I realize that that topic deserves a more in-depth discussion, but hopefully it at least gave you an idea of my approach and thought process. In this latest post I will be discussing the last “administrative” step before actually getting into the code: planning.","headline":"Developing a Personal Project, Part 3: Planning","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/general/2023/05/15/developing-a-personal-project-part-3.html"},"url":"http://localhost:4000/general/2023/05/15/developing-a-personal-project-part-3.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Stefan Sahagian" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Stefan Sahagian</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a><a class="page-link" href="/resume/">Resume</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <h1>Developing a Personal Project, Part 3: Planning</h1>
+<p>15 May 2023 - </p>
+
+<p><em>In the last part of this series I discussed in brief my thoughts on the research process. Upon reflection, I realize that that topic deserves a more in-depth discussion, but hopefully it at least gave you an idea of my approach and thought process. In this latest post I will be discussing the last “administrative” step before actually getting into the code: planning.</em></p>
+
+<p>After much research and deliberation you feel it’s time to start coding. You can see your finished project, gleaming in your mind’s eye. But while that complete idea is still fresh it would behoove you to enshrine its likeness in written form: a project overview document. As you knuckle down and start cranking out PRs, your high-level perspective will fade as you become concerned with nitty gritty details. You’re going to switch contexts, wearing the hat of the programmer rather than the project manager. If you don’t write down your plan now, you may find it shifting over time, possibly in very unproductive directions. As you struggle with practical challenges, you may become discouraged or lose sight of your goal. A written roadmap will help guide you, keep you on track, and ultimately tell you when it’s time to stop working.</p>
+
+<p>There are many formal methodologies for organizing a project, and you can choose any or none of them. You can organize your project however you like so long as it provides structure. It may be that you wish to work for a company that uses the Agile method. It could be good practice to organize your project in that style. Maybe you just need a “To Do” list. No matter how you choose to structure your plan, I would hold on to the document. Though uncommon, I have seen some interviewers ask for samples of technical writing. For my part, I am most recently familiar with the ShapeUp method, and so that is my current preference, although as you’ll see I use it mostly as inspiration.</p>
+
+<p>Below you will see the planning document I wrote for my Discord Bot. I begin with a problem statement, followed by potential solutions. I know that I want to build a bot regardless of utility, so this initial part is mostly a mental exercise. Still, I think it’s useful to lay out the problem as it is, along with it’s potential solutions and their pros and cons. In a professional setting, this can help assure you that your plan is sound, or point out flaws in your reasoning.</p>
+
+<p>The following section outlines what features the finished project must have, what it would be nice for it to have, and what it will not have. Here I define in concrete terms how the application will behave, but also what it will not do. As I mentioned in previous posts, be ruthless with scope. Cut away anything that isn’t weight bearing for your central idea. You’ll be grateful for it later.</p>
+
+<p>The last section is where I lay out specific tasks to be completed. In ShapeUp, tasks are organized by “Vertical Slice”, such that when a Slice is completed some increment of value is delivered. Seeing as I’m just one guy, and this is sort of a “draw the rest of the owl” scenario, I opted for horizontal slicing instead. Is this a glorified “To Do” list? Certainly, but it’s no less useful for that fact. At this level, some people like to use project trackers like Trello or a GitHub project, so if I were so inclined I would assign each bullet point to a card.</p>
+
+<p>As I progressed through these tasks, I would update them with notes to keep track of important info like test keys and test user UUIDs. Occasionally, when some aspect of the API did not behave as I expected, I would tweak this document to reflect this new technical reality. For example, when I first laid out my plan I expected to be using the REST API, but then I realized that Nostrum uses the Gateway API and had to adjust accordingly. When I became frustrated with config or a stubborn error, I would refer back to the overview and note how far I had come.</p>
+
+<p>Maybe you’re a 10x sorcerer who doesn’t need this kind of thing. But for a dope like me, staying organized and tracking my progress is critical to maintaining both my productivity and equanimity. See you in part 4, where I actually will show you some code.</p>
+
+<hr />
+
+<p><strong>Discord Bot - Movie Scheduler - Project Overview</strong></p>
+
+<p><em>Problem</em>: My friends and I have trouble remembering when our bi-weekly movie night is scheduled for.</p>
+
+<p><em>Potential Solutions</em>:</p>
+
+<p>Become more mindful of our commitments as a group.<br />
+Pros: Humanist. Cons: Hard, unreliable.</p>
+
+<p>Send out google calendar invites when a day is decided on.<br />
+Pros: Reliable. Easy. Cons: Boring, tedious. Resembles work too much</p>
+
+<p>One person write down an automated reminder to themselves.<br />
+Pros: Very Easy. Cons: unreliable, boring</p>
+
+<p>Create a discord bot that has functionality for recording movie night dates and functionality for sending reminders about the chosen date.<br />
+Pros: Fun, good resume project, has scaling potential for other projects. Cons: high effort, overcomplicated</p>
+
+<p><strong>Accepted Solution: Discord Bot</strong></p>
+
+<p>Must Haves:</p>
+<ul>
+  <li>an application that connects to a discord bot user, deployed in some way that does not rely on a local machine.</li>
+  <li>A slash command that accepts a string representing a movie night date and persists it as a date. (i.e. “/movienight schedule 3/6/23”)</li>
+  <li>A cron job that monitors the stored dates and sends a message to the discord channel when the chosen date approaches. (i.e. “There’s a movie night this week on Thursday!”)</li>
+  <li>proper error messages for misconfigured commands (e.g. “/movienight thrudsay” produces “I don’t understand that command”)</li>
+</ul>
+
+<p>Nice To Haves:</p>
+<ul>
+  <li>Accept multiple date formats (e.g. “/movienight thursday” == <this coming="" thursday="">. "/movienight next thursday" == <the thursday="" after="" the="" coming="" sunday="">, "/movienight Thursday, March 6th")</the></this></li>
+  <li>Accepts the movie name as part of the initial scheduling string and returns it as part of the reminder. (e.g. “There’s movie night this week on Thursday! We’re watching Scream 2!”)</li>
+  <li>Reschedule command that accepts 2 dates, a previously scheduled movie night and the new chosen date (i.e. /movienight 3/6/23 3/12/23)</li>
+  <li>Cancel command: accepts a date and cancels the movie for that date. (e.g. /movienight cancel 3/6/23 -&gt; “Movie canceled for 3/6/23”)</li>
+</ul>
+
+<p>Won’t Haves:</p>
+<ul>
+  <li>Will not process unformatted strings (e.g. /movienight 2 weeks from now. /movienight schedule a movie for next friday)</li>
+  <li>Will not accept mispelled days</li>
+  <li>Will not play spotify songs</li>
+</ul>
+
+<p>(Horizontal Slicing due to manpower issues)</p>
+
+<p>Slices:</p>
+<ul>
+  <li>Slice 1 (CRUD Stuff):
+    <ul>
+      <li>create database to store movie night data
+        <ul>
+          <li>for dev purposes, this is handled already. We’ll need to figure out the deploy situation later though.</li>
+        </ul>
+      </li>
+      <li>create migration for movienight table
+        <ul>
+          <li>what fields does a movienight need? datetime, movie title, creator id (discord user id?). Can’t think of any others</li>
+        </ul>
+      </li>
+      <li>create schema for movienight
+        <ul>
+          <li>date must be unique, spit out error when creating a movie night when one is already booked for that date</li>
+        </ul>
+      </li>
+      <li>create context for CRUD movienights
+        <ul>
+          <li>required functions:
+            <ul>
+              <li>create
+                <ul>
+                  <li>collision logic for existing movie nights?</li>
+                </ul>
+              </li>
+              <li>get movie night by date</li>
+              <li>get next movie night</li>
+              <li>update movie night with new date (and/or movie)</li>
+              <li>cancel/delete movie night</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>create functions for parsing movienight input strings into dates</li>
+      <li>write tests</li>
+    </ul>
+  </li>
+  <li>Slice 2 (The Cron Stuff):
+    <ul>
+      <li>import Oban (or other cron scheduler?)</li>
+      <li>create cron job to monitor movie queue</li>
+      <li>create worker to trigger reminders</li>
+      <li>write tests</li>
+    </ul>
+  </li>
+  <li>Slice 3 (The Discord Stuff):
+    <ul>
+      <li>create module for sending reminder messages to the channel</li>
+      <li>register a new slash command for scheduling movie night</li>
+      <li>register slash command for checking movie night</li>
+      <li>register slash command for rescheduling movie night</li>
+      <li>register slash command for canceling movie night</li>
+      <li>create gateway event handler consumer to accept data from slash command</li>
+      <li>persist data received by consumer</li>
+      <li>write tests (includes integration)</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Useful Info:</p>
+<ul>
+  <li>Test Server Guild Id: ‘<strong>**</strong><strong>**</strong>**’</li>
+  <li>Application Id: ‘<strong>**</strong><strong>**</strong>**’</li>
+</ul>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Stefan Sahagian</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Stefan Sahagian</li><li><a class="u-email" href="mailto:g.s.sahagian@gmail.com">g.s.sahagian@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/Shaka-n"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">Shaka-n</span></a></li><li><a href="https://www.twitter.com/GarenSahagian"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">GarenSahagian</span></a></li><li><a href="/feed.xml"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#rss"></use></svg> <span>RSS</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>This is my personal website and blog. Here I write about coding and personal projects.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

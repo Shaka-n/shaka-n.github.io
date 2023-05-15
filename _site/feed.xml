@@ -1,4 +1,133 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-05-15T11:41:23-04:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Stefan Sahagian</title><subtitle>This is my personal website and blog. Here I write about coding and personal projects.</subtitle><entry><title type="html">Manipulating Bitstrings in Elixir</title><link href="http://localhost:4000/elixir,%20quick%20tips/2023/05/14/manipulating-bitstrings-in-Elixir.html" rel="alternate" type="text/html" title="Manipulating Bitstrings in Elixir" /><published>2023-05-14T00:00:00-04:00</published><updated>2023-05-14T00:00:00-04:00</updated><id>http://localhost:4000/elixir,%20quick%20tips/2023/05/14/manipulating-bitstrings-in-Elixir</id><content type="html" xml:base="http://localhost:4000/elixir,%20quick%20tips/2023/05/14/manipulating-bitstrings-in-Elixir.html">&lt;p&gt;Per the &lt;a href=&quot;https://elixir-lang.org/getting-started/binaries-strings-and-char-lists.html#bitstrings&quot;&gt;official documentation&lt;/a&gt;, bitstrings are a fundamental data type in Elixir representing a contiguous sequence of bits in memory. Useful for UTF-8 encodings and other fun things like secret obfuscation, bitstrings are a great tool to have in your back pocket. Instead of parroting existing documentation, I wanted to share a little nuance that I had trouble grasping while I was learning about this data type.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-05-15T13:49:00-04:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Stefan Sahagian</title><subtitle>This is my personal website and blog. Here I write about coding and personal projects.</subtitle><entry><title type="html">Developing a Personal Project, Part 3: Planning</title><link href="http://localhost:4000/general/2023/05/15/developing-a-personal-project-part-3.html" rel="alternate" type="text/html" title="Developing a Personal Project, Part 3: Planning" /><published>2023-05-15T00:00:00-04:00</published><updated>2023-05-15T00:00:00-04:00</updated><id>http://localhost:4000/general/2023/05/15/developing-a-personal-project-part-3</id><content type="html" xml:base="http://localhost:4000/general/2023/05/15/developing-a-personal-project-part-3.html">&lt;p&gt;&lt;em&gt;In the last part of this series I discussed in brief my thoughts on the research process. Upon reflection, I realize that that topic deserves a more in-depth discussion, but hopefully it at least gave you an idea of my approach and thought process. In this latest post I will be discussing the last “administrative” step before actually getting into the code: planning.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;After much research and deliberation you feel it’s time to start coding. You can see your finished project, gleaming in your mind’s eye. But while that complete idea is still fresh it would behoove you to enshrine its likeness in written form: a project overview document. As you knuckle down and start cranking out PRs, your high-level perspective will fade as you become concerned with nitty gritty details. You’re going to switch contexts, wearing the hat of the programmer rather than the project manager. If you don’t write down your plan now, you may find it shifting over time, possibly in very unproductive directions. As you struggle with practical challenges, you may become discouraged or lose sight of your goal. A written roadmap will help guide you, keep you on track, and ultimately tell you when it’s time to stop working.&lt;/p&gt;
+
+&lt;p&gt;There are many formal methodologies for organizing a project, and you can choose any or none of them. You can organize your project however you like so long as it provides structure. It may be that you wish to work for a company that uses the Agile method. It could be good practice to organize your project in that style. Maybe you just need a “To Do” list. No matter how you choose to structure your plan, I would hold on to the document. Though uncommon, I have seen some interviewers ask for samples of technical writing. For my part, I am most recently familiar with the ShapeUp method, and so that is my current preference, although as you’ll see I use it mostly as inspiration.&lt;/p&gt;
+
+&lt;p&gt;Below you will see the planning document I wrote for my Discord Bot. I begin with a problem statement, followed by potential solutions. I know that I want to build a bot regardless of utility, so this initial part is mostly a mental exercise. Still, I think it’s useful to lay out the problem as it is, along with it’s potential solutions and their pros and cons. In a professional setting, this can help assure you that your plan is sound, or point out flaws in your reasoning.&lt;/p&gt;
+
+&lt;p&gt;The following section outlines what features the finished project must have, what it would be nice for it to have, and what it will not have. Here I define in concrete terms how the application will behave, but also what it will not do. As I mentioned in previous posts, be ruthless with scope. Cut away anything that isn’t weight bearing for your central idea. You’ll be grateful for it later.&lt;/p&gt;
+
+&lt;p&gt;The last section is where I lay out specific tasks to be completed. In ShapeUp, tasks are organized by “Vertical Slice”, such that when a Slice is completed some increment of value is delivered. Seeing as I’m just one guy, and this is sort of a “draw the rest of the owl” scenario, I opted for horizontal slicing instead. Is this a glorified “To Do” list? Certainly, but it’s no less useful for that fact. At this level, some people like to use project trackers like Trello or a GitHub project, so if I were so inclined I would assign each bullet point to a card.&lt;/p&gt;
+
+&lt;p&gt;As I progressed through these tasks, I would update them with notes to keep track of important info like test keys and test user UUIDs. Occasionally, when some aspect of the API did not behave as I expected, I would tweak this document to reflect this new technical reality. For example, when I first laid out my plan I expected to be using the REST API, but then I realized that Nostrum uses the Gateway API and had to adjust accordingly. When I became frustrated with config or a stubborn error, I would refer back to the overview and note how far I had come.&lt;/p&gt;
+
+&lt;p&gt;Maybe you’re a 10x sorcerer who doesn’t need this kind of thing. But for a dope like me, staying organized and tracking my progress is critical to maintaining both my productivity and equanimity. See you in part 4, where I actually will show you some code.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;Discord Bot - Movie Scheduler - Project Overview&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Problem&lt;/em&gt;: My friends and I have trouble remembering when our bi-weekly movie night is scheduled for.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Potential Solutions&lt;/em&gt;:&lt;/p&gt;
+
+&lt;p&gt;Become more mindful of our commitments as a group.&lt;br /&gt;
+Pros: Humanist. Cons: Hard, unreliable.&lt;/p&gt;
+
+&lt;p&gt;Send out google calendar invites when a day is decided on.&lt;br /&gt;
+Pros: Reliable. Easy. Cons: Boring, tedious. Resembles work too much&lt;/p&gt;
+
+&lt;p&gt;One person write down an automated reminder to themselves.&lt;br /&gt;
+Pros: Very Easy. Cons: unreliable, boring&lt;/p&gt;
+
+&lt;p&gt;Create a discord bot that has functionality for recording movie night dates and functionality for sending reminders about the chosen date.&lt;br /&gt;
+Pros: Fun, good resume project, has scaling potential for other projects. Cons: high effort, overcomplicated&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Accepted Solution: Discord Bot&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Must Haves:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;an application that connects to a discord bot user, deployed in some way that does not rely on a local machine.&lt;/li&gt;
+  &lt;li&gt;A slash command that accepts a string representing a movie night date and persists it as a date. (i.e. “/movienight schedule 3/6/23”)&lt;/li&gt;
+  &lt;li&gt;A cron job that monitors the stored dates and sends a message to the discord channel when the chosen date approaches. (i.e. “There’s a movie night this week on Thursday!”)&lt;/li&gt;
+  &lt;li&gt;proper error messages for misconfigured commands (e.g. “/movienight thrudsay” produces “I don’t understand that command”)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Nice To Haves:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Accept multiple date formats (e.g. “/movienight thursday” == &lt;this coming=&quot;&quot; thursday=&quot;&quot;&gt;. &quot;/movienight next thursday&quot; == &lt;the thursday=&quot;&quot; after=&quot;&quot; the=&quot;&quot; coming=&quot;&quot; sunday=&quot;&quot;&gt;, &quot;/movienight Thursday, March 6th&quot;)&lt;/the&gt;&lt;/this&gt;&lt;/li&gt;
+  &lt;li&gt;Accepts the movie name as part of the initial scheduling string and returns it as part of the reminder. (e.g. “There’s movie night this week on Thursday! We’re watching Scream 2!”)&lt;/li&gt;
+  &lt;li&gt;Reschedule command that accepts 2 dates, a previously scheduled movie night and the new chosen date (i.e. /movienight 3/6/23 3/12/23)&lt;/li&gt;
+  &lt;li&gt;Cancel command: accepts a date and cancels the movie for that date. (e.g. /movienight cancel 3/6/23 -&amp;gt; “Movie canceled for 3/6/23”)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Won’t Haves:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Will not process unformatted strings (e.g. /movienight 2 weeks from now. /movienight schedule a movie for next friday)&lt;/li&gt;
+  &lt;li&gt;Will not accept mispelled days&lt;/li&gt;
+  &lt;li&gt;Will not play spotify songs&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;(Horizontal Slicing due to manpower issues)&lt;/p&gt;
+
+&lt;p&gt;Slices:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Slice 1 (CRUD Stuff):
+    &lt;ul&gt;
+      &lt;li&gt;create database to store movie night data
+        &lt;ul&gt;
+          &lt;li&gt;for dev purposes, this is handled already. We’ll need to figure out the deploy situation later though.&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;create migration for movienight table
+        &lt;ul&gt;
+          &lt;li&gt;what fields does a movienight need? datetime, movie title, creator id (discord user id?). Can’t think of any others&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;create schema for movienight
+        &lt;ul&gt;
+          &lt;li&gt;date must be unique, spit out error when creating a movie night when one is already booked for that date&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;create context for CRUD movienights
+        &lt;ul&gt;
+          &lt;li&gt;required functions:
+            &lt;ul&gt;
+              &lt;li&gt;create
+                &lt;ul&gt;
+                  &lt;li&gt;collision logic for existing movie nights?&lt;/li&gt;
+                &lt;/ul&gt;
+              &lt;/li&gt;
+              &lt;li&gt;get movie night by date&lt;/li&gt;
+              &lt;li&gt;get next movie night&lt;/li&gt;
+              &lt;li&gt;update movie night with new date (and/or movie)&lt;/li&gt;
+              &lt;li&gt;cancel/delete movie night&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;create functions for parsing movienight input strings into dates&lt;/li&gt;
+      &lt;li&gt;write tests&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Slice 2 (The Cron Stuff):
+    &lt;ul&gt;
+      &lt;li&gt;import Oban (or other cron scheduler?)&lt;/li&gt;
+      &lt;li&gt;create cron job to monitor movie queue&lt;/li&gt;
+      &lt;li&gt;create worker to trigger reminders&lt;/li&gt;
+      &lt;li&gt;write tests&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Slice 3 (The Discord Stuff):
+    &lt;ul&gt;
+      &lt;li&gt;create module for sending reminder messages to the channel&lt;/li&gt;
+      &lt;li&gt;register a new slash command for scheduling movie night&lt;/li&gt;
+      &lt;li&gt;register slash command for checking movie night&lt;/li&gt;
+      &lt;li&gt;register slash command for rescheduling movie night&lt;/li&gt;
+      &lt;li&gt;register slash command for canceling movie night&lt;/li&gt;
+      &lt;li&gt;create gateway event handler consumer to accept data from slash command&lt;/li&gt;
+      &lt;li&gt;persist data received by consumer&lt;/li&gt;
+      &lt;li&gt;write tests (includes integration)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Useful Info:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Test Server Guild Id: ‘&lt;strong&gt;**&lt;/strong&gt;&lt;strong&gt;**&lt;/strong&gt;**’&lt;/li&gt;
+  &lt;li&gt;Application Id: ‘&lt;strong&gt;**&lt;/strong&gt;&lt;strong&gt;**&lt;/strong&gt;**’&lt;/li&gt;
+&lt;/ul&gt;</content><author><name></name></author><category term="General" /><summary type="html">In the last part of this series I discussed in brief my thoughts on the research process. Upon reflection, I realize that that topic deserves a more in-depth discussion, but hopefully it at least gave you an idea of my approach and thought process. In this latest post I will be discussing the last “administrative” step before actually getting into the code: planning.</summary></entry><entry><title type="html">Manipulating Bitstrings in Elixir</title><link href="http://localhost:4000/elixir,%20quick%20tips/2023/05/14/manipulating-bitstrings-in-Elixir.html" rel="alternate" type="text/html" title="Manipulating Bitstrings in Elixir" /><published>2023-05-14T00:00:00-04:00</published><updated>2023-05-14T00:00:00-04:00</updated><id>http://localhost:4000/elixir,%20quick%20tips/2023/05/14/manipulating-bitstrings-in-Elixir</id><content type="html" xml:base="http://localhost:4000/elixir,%20quick%20tips/2023/05/14/manipulating-bitstrings-in-Elixir.html">&lt;p&gt;Per the &lt;a href=&quot;https://elixir-lang.org/getting-started/binaries-strings-and-char-lists.html#bitstrings&quot;&gt;official documentation&lt;/a&gt;, bitstrings are a fundamental data type in Elixir representing a contiguous sequence of bits in memory. Useful for UTF-8 encodings and other fun things like secret obfuscation, bitstrings are a great tool to have in your back pocket. Instead of parroting existing documentation, I wanted to share a little nuance that I had trouble grasping while I was learning about this data type.&lt;/p&gt;
 
 &lt;p&gt;When you concatenate, prepend, or append bitstring literals in a bitstring special form(i.e. «value::size»), the output format can look very different from the input format. If your output produces a valid UTF-8 encoded character, you will get that character. If the result of the concatentation would overflow 8 bits (the maximum), then the result will be whatever integer is represented by that 8-bit value, and then a bitstring literal comprised of the remainder. For example:&lt;/p&gt;
 
