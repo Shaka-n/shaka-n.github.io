@@ -1,4 +1,129 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-05-25T15:09:55-04:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Stefan Sahagian</title><subtitle>This is my personal website and blog. Here I write about coding and personal projects.</subtitle><entry><title type="html">Implementing a Circular Buffer in Elixir</title><link href="http://localhost:4000/elixir/2023/05/24/implementing-a-circular-buffer-in-elixir.html" rel="alternate" type="text/html" title="Implementing a Circular Buffer in Elixir" /><published>2023-05-24T00:00:00-04:00</published><updated>2023-05-24T00:00:00-04:00</updated><id>http://localhost:4000/elixir/2023/05/24/implementing-a-circular-buffer-in-elixir</id><content type="html" xml:base="http://localhost:4000/elixir/2023/05/24/implementing-a-circular-buffer-in-elixir.html">&lt;p&gt;I recently completed an &lt;a href=&quot;https://exercism.org/tracks/elixir/exercises/circular-buffer&quot;&gt;Exercism challenge&lt;/a&gt; to implement a &lt;a href=&quot;https://en.wikipedia.org/wiki/Circular_buffer&quot;&gt;circular buffer&lt;/a&gt; in Elixir, and I wanted to talk through my solution. I’ve pasted the written instructions for the buffers behavior below, though the test suite had some additional complexity which I’ll try to explain.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-05-31T14:30:04-04:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Stefan Sahagian</title><subtitle>This is my personal website and blog. Here I write about coding and personal projects.</subtitle><entry><title type="html">Developing a Personal Project, Part 3: How to Build a Discord Bot Using Nostrum</title><link href="http://localhost:4000/elixir/2023/05/31/developing-a-personal-project-part-4.html" rel="alternate" type="text/html" title="Developing a Personal Project, Part 3: How to Build a Discord Bot Using Nostrum" /><published>2023-05-31T00:00:00-04:00</published><updated>2023-05-31T00:00:00-04:00</updated><id>http://localhost:4000/elixir/2023/05/31/developing-a-personal-project-part-4</id><content type="html" xml:base="http://localhost:4000/elixir/2023/05/31/developing-a-personal-project-part-4.html">&lt;p&gt;&lt;em&gt;In the first three entries in this series I waxed poetic on my approach to personal coding projects. In this entry I’ll get down to business describing how to set up a Discord bot using Nostrum.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Before starting, you’ll need to have a Discord account and the latest version of Elixir. I would also recommend starting a new Discord server/guild to test your bot in with out risk of bothering your users.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Registering a new Discord Application&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Step 1: Log into the &lt;a href=&quot;https://discord.com/developers/&quot;&gt;Discord Developer Portal&lt;/a&gt; and register a new application.&lt;/p&gt;
+
+&lt;p&gt;Step 2: Under Oath2, generate an invitation URL for your application using the URL Generator. Select “bot” and “applications.commands” from the top list. This will bring up another list of permissions that your bot user can have. If you know exactly which permissions your bot needs, you can specify them now. Personally, I find it useful to give the bot Administrator permissions so that you can quickly move into development and worry about config best practices later.
+Step 3: Open the generated URL in your browser. This will bring up a window that will let you select which server you’d like to add it to. Add it to your test server.&lt;/p&gt;
+
+&lt;p&gt;Step 4: In the “Bot” tab in the Discord Developer Portal, copy the token near the top of the page.&lt;/p&gt;
+
+&lt;p&gt;Step 5: Store your token as an environment variable. I use Oh My Zsh on Mac, so in my case I would open my ~.zshrc file with nvim, and add a line to the file like so:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;DISCORD_BOT_TOKEN: MTExMzUxMDk5MjgzMjM3Mjc0Ng.999999.mtkJ7zfEHTZoD5ne5xS_999999_SZvtUYZxxDg
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Aftwards, entering &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;source ~.zshrc&lt;/code&gt; will ensure the environment variable is loaded. You can check by just typing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;env&lt;/code&gt; to list all of your set variables.&lt;/p&gt;
+
+&lt;p&gt;With that, we’re basically done with the Discord side of things, for a while anyways.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Bootstrapping the Project&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;I recommend starting a fresh Phoenix app for this because it gives us a directory and config structure that will be useful for getting up and running quickly. Nostrum implements a GenStage architecture (more on that later), which requires a Supervision Tree. If you’re comfortable starting a vanilla Elixir project and Supervision tree yourself, by all means go for it.&lt;/p&gt;
+
+&lt;p&gt;Step 1: Open your IDE of choice and a terminal, and enter &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mix phx.new my_app --no-html --no-assets&lt;/code&gt;. Starting the project this way will omit the HTML and Javascript bits, giving us purely an API for our bot user. If you plan to have some sort of UI for your app, just use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mix phx.new my_app&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Step 2: In &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mix.exs&lt;/code&gt; add Nostrum to your dependecies list:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;def deps do
+  [{:nostrum, git: &quot;https://github.com/Kraigie/nostrum.git&quot;}]
+end
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Step 3: In &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;config/runtime.exs&lt;/code&gt; add the following:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;config :nostrum,
+    token: System.get_env(&quot;HANEKAWA_BOT_TOKEN&quot;),
+    gateway_intents: :all
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;This will allow Nostrum to pick up your bots API key at runtime. By default Nostrum uses the Gateway API, which requires you to define which intents (i.e. which payloads you want to receive from Discord). As with permissions, it can be useful to set this to all for now, but it is certainly recommended to only receive those intents that you need.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Implementing Nostrum&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Now that we’ve spun up our project and registered a new application, we’re ready to implement the last pieces.&lt;/p&gt;
+
+&lt;p&gt;Step 1: Make a new file &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lib/my_app/consumer_supervisor.ex&lt;/code&gt;. Implement the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;start_link/1&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;init/1&lt;/code&gt; callbacks, like so:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;defmodule MyApp.ConsumerSupervisor do
+  use Supervisor
+
+  def start_link(args) do
+    Supervisor.start_link(__MODULE__, args, name: __MODULE__)
+  end
+
+  @impl true
+  def init(_args) do
+    children =
+      for n &amp;lt;- 1..System.schedulers_online(),
+          do: Supervisor.child_spec({MyApp.Consumer, []}, id: {:my_app, :consumer, n})
+
+    Supervisor.init(children, strategy: :one_for_one)
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Step 2: Make a new file &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lib/my_app/consumer.ex&lt;/code&gt;, and implement the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;start_link/1&lt;/code&gt; callback:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;defmodule Hanekawa.Consumer do
+  @moduledoc &quot;&quot;&quot;
+    This module defines the consumer agent that acts as a gateway event handler for
+    events passed from the Discord WebSocket connection.
+  &quot;&quot;&quot;
+  use Nostrum.Consumer
+
+  alias Nostrum.Api
+
+  def start_link do
+    Consumer.start_link(__MODULE__)
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Step 3: Implement event handlers. When an event comes through from Discord, Nostrum will attempt to match against the intent of the event (e.g. :MESSAGE_CREATE). We need a default handler to prevent the consumer from crashing when it receives an event that we haven’t explicitly told it how to handle.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; def handle_event({:MESSAGE_CREATE, msg, _ws_state}) do
+    # IO.inspect(msg)
+    case msg.content do
+      &quot;!ping&quot; -&amp;gt;
+        Api.create_message(msg.channel_id, &quot;pong!&quot;)
+      _ -&amp;gt;
+      	:ignore
+    end
+ end
+
+ def handle_event(_event) do
+    :noop
+  end
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Step 4: Within &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lib/my_app/application.exs&lt;/code&gt; add your Consumer Supervisor to your start function. This will start our implementation of the Nostrum ConsumerSupervisor within our Supervision tree.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  @impl true
+  def start(_type, _args) do
+    children = [
+      # Start the Telemetry supervisor
+      MyAppWeb.Telemetry,
+      # Start the Ecto repository
+      MyApp.Repo,
+      # Start the PubSub system
+      {Phoenix.PubSub, name: MyApp.PubSub},
+      # Start Finch
+      {Finch, name: MyApp.Finch},
+      # Start the Endpoint (http/https)
+      MyAppWeb.Endpoint,
+      MyApp.ConsumerSupervisor
+      # Start a worker by calling: MyApp.Worker.start_link(arg)
+      # {MyApp.Worker, arg}
+    ]
+
+    # See https://hexdocs.pm/elixir/Supervisor.html
+    # for other strategies and supported options
+    opts = [strategy: :one_for_one, name: MyApp.Supervisor]
+    Supervisor.start_link(children, opts)
+  end
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Step 5: Test your application. Start it up with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;iex -S mix phx.server&lt;/code&gt;, and send your test message “!ping” from Discord. If configured properly, you should see the response “!pong” returned by the bot user to the channel.&lt;/p&gt;
+
+&lt;p&gt;That’s the bare necessities, as they are. There’s much more to both Nostrum and the Discord API, but this is all you should need to get up and running. If you found you had any trouble with these instructions, or you think I made a mistake, by all means drop me a DM on &lt;a href=&quot;https://twitter.com/StefanSahagian&quot;&gt;Twitter&lt;/a&gt;.&lt;/p&gt;</content><author><name></name></author><category term="elixir" /><summary type="html">In the first three entries in this series I waxed poetic on my approach to personal coding projects. In this entry I’ll get down to business describing how to set up a Discord bot using Nostrum.</summary></entry><entry><title type="html">Implementing a Circular Buffer in Elixir</title><link href="http://localhost:4000/elixir/2023/05/24/implementing-a-circular-buffer-in-elixir.html" rel="alternate" type="text/html" title="Implementing a Circular Buffer in Elixir" /><published>2023-05-24T00:00:00-04:00</published><updated>2023-05-24T00:00:00-04:00</updated><id>http://localhost:4000/elixir/2023/05/24/implementing-a-circular-buffer-in-elixir</id><content type="html" xml:base="http://localhost:4000/elixir/2023/05/24/implementing-a-circular-buffer-in-elixir.html">&lt;p&gt;I recently completed an &lt;a href=&quot;https://exercism.org/tracks/elixir/exercises/circular-buffer&quot;&gt;Exercism challenge&lt;/a&gt; to implement a &lt;a href=&quot;https://en.wikipedia.org/wiki/Circular_buffer&quot;&gt;circular buffer&lt;/a&gt; in Elixir, and I wanted to talk through my solution. I’ve pasted the written instructions for the buffers behavior below, though the test suite had some additional complexity which I’ll try to explain.&lt;/p&gt;
 
 &lt;hr /&gt;
 
