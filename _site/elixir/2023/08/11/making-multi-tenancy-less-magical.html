@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Making Multi-Tenancy Less Magical | Stefan Sahagian</title>
+<meta name="generator" content="Jekyll v3.9.3" />
+<meta property="og:title" content="Making Multi-Tenancy Less Magical" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I was tasked by a friend to help implement multi-tenancy in his WISP platform in a way that is still secure, but more conducive to testing and generally more explicit." />
+<meta property="og:description" content="I was tasked by a friend to help implement multi-tenancy in his WISP platform in a way that is still secure, but more conducive to testing and generally more explicit." />
+<link rel="canonical" href="http://localhost:4000/elixir/2023/08/11/making-multi-tenancy-less-magical.html" />
+<meta property="og:url" content="http://localhost:4000/elixir/2023/08/11/making-multi-tenancy-less-magical.html" />
+<meta property="og:site_name" content="Stefan Sahagian" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-08-11T00:00:00-04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Making Multi-Tenancy Less Magical" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-08-11T00:00:00-04:00","datePublished":"2023-08-11T00:00:00-04:00","description":"I was tasked by a friend to help implement multi-tenancy in his WISP platform in a way that is still secure, but more conducive to testing and generally more explicit.","headline":"Making Multi-Tenancy Less Magical","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/elixir/2023/08/11/making-multi-tenancy-less-magical.html"},"url":"http://localhost:4000/elixir/2023/08/11/making-multi-tenancy-less-magical.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Stefan Sahagian" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Stefan Sahagian</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a><a class="page-link" href="/resume/">Resume</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <h1>Making Multi-Tenancy Less Magical</h1>
+<p>11 Aug 2023 - </p>
+
+<p>I was tasked by a friend to help implement multi-tenancy in his WISP platform in a way that is still secure, but more conducive to testing and generally more explicit.</p>
+
+<p>Multi-tenancy is an architecture pattern where a single instance of an application serves multiple tenants/entities while keeping their respective data isolated from each other. Commonly used in SaaS platforms, the pattern helps keep costs low by allowing users to share resources and while simplifying updates and maintenance. In Elixir, there are two common approaches to multi-tenancy: database prefixing and foreign key associations.</p>
+
+<p>The crux of the <a href="https://hexdocs.pm/ecto/multi-tenancy-with-query-prefixes.html">query prefixing</a> technique relies on adding a new database prefix for every tenant, which keeps their data completely siloed in separate Postgres schemas. In an Elixir app, you set up your Ecto config like so to change the default database prefix:</p>
+
+<figure class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span class="n">query_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"SET search_path TO connection_prefix"</span><span class="p">,</span> <span class="p">[]]</span>
+
+<span class="n">config</span> <span class="ss">:my_app</span><span class="p">,</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Repo</span><span class="p">,</span>
+  <span class="ss">username:</span> <span class="s2">"postgres"</span><span class="p">,</span>
+  <span class="ss">password:</span> <span class="s2">"postgres"</span><span class="p">,</span>
+  <span class="ss">database:</span> <span class="s2">"demo_dev"</span><span class="p">,</span>
+  <span class="ss">hostname:</span> <span class="s2">"localhost"</span><span class="p">,</span>
+  <span class="ss">pool_size:</span> <span class="mi">10</span><span class="p">,</span>
+  <span class="ss">after_connect:</span> <span class="p">{</span><span class="no">Postgrex</span><span class="p">,</span> <span class="ss">:query!</span><span class="p">,</span> <span class="n">query_args</span><span class="p">}</span></code></pre></figure>
+
+<p>You’ll then have to explicitly create a new prefix on your database, as Ecto won’t do it for you.</p>
+
+<p>Querying across prefixes can be done by passing the :prefix keyword at the query, struct, or join level:</p>
+
+<figure class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span class="no">MyApp</span><span class="o">.</span><span class="no">Repo</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="no">Sample</span><span class="p">,</span> <span class="ss">prefix:</span> <span class="s2">"public"</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="n">from</span> <span class="n">p</span> <span class="ow">in</span> <span class="no">Post</span><span class="p">,</span> <span class="ss">prefix:</span> <span class="s2">"foo"</span><span class="p">,</span>
+  <span class="ss">join:</span> <span class="n">c</span> <span class="ow">in</span> <span class="no">Comment</span><span class="p">,</span> <span class="ss">prefix:</span> <span class="s2">"bar"</span></code></pre></figure>
+
+<p>The drawbacks to this approach are that you need to add a new prefix for every tenant, and then must run database migrations for each prefix individually when making changes. This can get very costly and slow at scale, not to mention the headache it poses for just writing your average Ecto join. Further, this does require a bit more Postgres knowledge to work with, which imposes its own kind of overhead. There are hex packages that abstract the funky parts of this away, but the scaling costs remain the same. Not to mention, adding packages breaks with the spirit of my original mission of making things less magical.</p>
+
+<p>By contrast, enforcing <a href="https://hexdocs.pm/ecto/multi-tenancy-with-foreign-keys.html">multi-tenancy via foreign key</a> should appear much more familiar to the average dev. Let’s say schemas are restricted by <code class="language-plaintext highlighter-rouge">org-id</code> such that only users from that organization can access its data. Just add this to all of your queries for tenanted schemas (i.e. data that should be siloed per user/client/tenant), and you’re good to go:</p>
+
+<figure class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span class="o">...</span>
+<span class="n">where</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="ss">org_id:</span> <span class="o">^</span><span class="n">org_id</span><span class="p">)</span>
+<span class="o">...</span></code></pre></figure>
+
+<p>To make this more reliable and less wildly insecure, a common approach is to leverage the callback <code class="language-plaintext highlighter-rouge">prepare_query/3</code> from Ecto.Query. Adding this callback to our <code class="language-plaintext highlighter-rouge">repo.ex</code> will ensure that it is run before any other Ecto Query, enforcing our requirement that a tenanted schema can only be accessed by a tenant with the proper org id.</p>
+
+<figure class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Repo</span> <span class="k">do</span>
+  <span class="o">...</span>
+  <span class="nv">@impl</span> <span class="no">true</span>
+  <span class="k">def</span> <span class="n">prepare_query</span><span class="p">(</span><span class="n">_operation</span><span class="p">,</span> <span class="p">%{</span><span class="ss">from:</span> <span class="p">%{</span><span class="ss">source:</span> <span class="p">{</span><span class="n">_</span><span class="p">,</span> <span class="n">schema</span><span class="p">}}}</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">opts</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">excepted?</span> <span class="o">=</span> <span class="no">Enum</span><span class="o">.</span><span class="n">member?</span><span class="p">(</span><span class="nv">@excepted_schemas</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
+    <span class="k">cond</span> <span class="k">do</span>
+      <span class="n">opts</span><span class="p">[</span><span class="ss">:skip_org_id</span><span class="p">]</span> <span class="o">||</span> <span class="n">opts</span><span class="p">[</span><span class="ss">:schema_migration</span><span class="p">]</span> <span class="o">-&gt;</span>
+        <span class="p">{</span><span class="n">query</span><span class="p">,</span> <span class="n">opts</span><span class="p">}</span>
+
+      <span class="n">org_id</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="ss">:org_id</span><span class="p">]</span> <span class="o">-&gt;</span>
+        <span class="p">{</span><span class="no">Ecto</span><span class="o">.</span><span class="no">Query</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="ss">org_id:</span> <span class="o">^</span><span class="n">org_id</span><span class="p">),</span> <span class="n">opts</span><span class="p">}</span>
+
+      <span class="no">true</span> <span class="o">-&gt;</span>
+        <span class="k">raise</span> <span class="s2">"expected org_id or skip_org_id to be set"</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>You’ll still have to add <code class="language-plaintext highlighter-rouge">org_id</code> to every query though. Let’s make that easier by setting <code class="language-plaintext highlighter-rouge">org_id</code> by default. First, add these to <code class="language-plaintext highlighter-rouge">repo.ex</code>:</p>
+
+<figure class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Repo</span> <span class="k">do</span>
+  <span class="o">...</span>
+
+  <span class="nv">@tenant_key</span> <span class="p">{</span><span class="bp">__MODULE__</span><span class="p">,</span> <span class="ss">:org_id</span><span class="p">}</span>
+
+  <span class="k">def</span> <span class="n">put_org_id</span><span class="p">(</span><span class="n">org_id</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">Process</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="nv">@tenant_key</span><span class="p">,</span> <span class="n">org_id</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">get_org_id</span><span class="p">()</span> <span class="k">do</span>
+    <span class="no">Process</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nv">@tenant_key</span><span class="p">)</span>
+  <span class="k">end</span></code></pre></figure>
+
+<p>These will give every calling process an easy way to keep the org_id on hand. To set the org_id as a default option in all repo operations, we implement the <code class="language-plaintext highlighter-rouge">default_options/1</code> callback like so:</p>
+
+<figure class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Repo</span> <span class="k">do</span>
+  <span class="o">...</span>
+
+  <span class="nv">@impl</span> <span class="no">true</span>
+  <span class="k">def</span> <span class="n">default_options</span><span class="p">(</span><span class="n">_operation</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">[</span><span class="ss">org_id:</span> <span class="n">get_org_id</span><span class="p">()]</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>Now <code class="language-plaintext highlighter-rouge">org_id</code> will always be set by default on every repo operation and we don’t have to worry about specifying that we don’t want to pollute our data store. But how do we set the <code class="language-plaintext highlighter-rouge">org_id</code>? Well, it can vary, but in my case, I opted to add it to the Plug pipeline:</p>
+
+<figure class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span class="k">def</span> <span class="n">call</span><span class="p">(%</span><span class="no">Plug</span><span class="o">.</span><span class="no">Conn</span><span class="p">{</span><span class="ss">host:</span> <span class="n">host</span><span class="p">}</span> <span class="o">=</span> <span class="n">conn</span><span class="p">,</span> <span class="p">%{</span><span class="ss">root_host:</span> <span class="n">root_host</span><span class="p">}</span> <span class="o">=</span> <span class="n">_opts</span><span class="p">)</span> <span class="k">do</span>
+    <span class="k">case</span> <span class="n">extract_subdomain</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">root_host</span><span class="p">)</span> <span class="k">do</span>
+      <span class="n">subdomain</span> <span class="ow">when</span> <span class="n">byte_size</span><span class="p">(</span><span class="n">subdomain</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">-&gt;</span>
+        <span class="no">Repo</span><span class="o">.</span><span class="n">find_and_put_org_id</span><span class="p">(</span><span class="n">subdomain</span><span class="p">)</span>
+        <span class="n">org_id</span> <span class="o">=</span> <span class="no">Repo</span><span class="o">.</span><span class="n">find_org_id</span><span class="p">(</span><span class="n">subdomain</span><span class="p">)</span>
+        <span class="n">conn</span>
+        <span class="o">|&gt;</span> <span class="n">fetch_session</span><span class="p">()</span>
+        <span class="o">|&gt;</span> <span class="n">put_session</span><span class="p">(</span><span class="ss">:org_id</span><span class="p">,</span> <span class="n">org_id</span><span class="p">)</span>
+
+      <span class="n">_</span> <span class="o">-&gt;</span>
+        <span class="n">conn</span>
+    <span class="k">end</span>
+  <span class="k">end</span></code></pre></figure>
+
+<p>Plugs are a powerful part of the Phoenix framework that I won’t get into. Suffice to say, this will run when a user loads the page on their custom subdomain, and that subdomain will be used to retrieve their org id and set it in the process dictionary of our Repo module. They’ll still need to authenticate as normal, so there’s no opportunity for somebody to go to the wrong domain and login with the wrong org_id.</p>
+
+<p>There is one last wrinkle however: what do you do when a schema doesn’t have org_id and can’t be joined to one? What if you have a schema in your ORM that is relatively remote from org_id? Are you forced to chain a long series of joins together every time? In my case there were two outliers like this: cron jobs and session tokens.</p>
+
+<p>For the cron jobs (we used the Oban package), it doesn’t make sense for a daily system level job to be associated with a specific tenant. So, recalling the earlier prefix technique, I chose to give Oban its own database prefix. This is pretty simple to do in config, and there’s not much else to change but add an exception to <code class="language-plaintext highlighter-rouge">prepare_query/3</code>. Now the queries for Oban jobs skip right by the check and continue as normal.</p>
+
+<p>For the session tokens, I opted for an explicit exceptions list. I’d rather not mess around with the authentication code, and since it didn’t rely on my multi-tenancy solution to begin with, excepting it won’t introduce a new attack surface. By and large I want all schemas to be tenanted in some way within this app, so having a short list of the exceptions makes some sense, as I’m unlikely to add to it frequently. If I do, all I have to do is alias the schema and add it to the module attribute that defines the list of exceptions.</p>
+
+<figure class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Repo</span> <span class="k">do</span>
+  <span class="o">...</span>
+ <span class="nv">@excepted_schemas</span> <span class="p">[</span><span class="no">UserToken</span><span class="p">]</span>
+
+  <span class="nv">@impl</span> <span class="no">true</span>
+  <span class="k">def</span> <span class="n">prepare_query</span><span class="p">(</span><span class="n">_operation</span><span class="p">,</span> <span class="p">%{</span><span class="ss">from:</span> <span class="p">%{</span><span class="ss">source:</span> <span class="p">{</span><span class="n">_</span><span class="p">,</span> <span class="n">schema</span><span class="p">}}}</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">opts</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">excepted?</span> <span class="o">=</span> <span class="no">Enum</span><span class="o">.</span><span class="n">member?</span><span class="p">(</span><span class="nv">@excepted_schemas</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
+    <span class="k">cond</span> <span class="k">do</span>
+      <span class="n">opts</span><span class="p">[</span><span class="ss">:skip_org_id</span><span class="p">]</span> <span class="o">||</span> <span class="n">opts</span><span class="p">[</span><span class="ss">:schema_migration</span><span class="p">]</span> <span class="o">||</span> <span class="n">opts</span><span class="p">[</span><span class="ss">:prefix</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"oban"</span> <span class="o">||</span> <span class="n">excepted?</span> <span class="o">-&gt;</span>
+        <span class="p">{</span><span class="n">query</span><span class="p">,</span> <span class="n">opts</span><span class="p">}</span>
+
+      <span class="n">org_id</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="ss">:org_id</span><span class="p">]</span> <span class="o">-&gt;</span>
+        <span class="p">{</span><span class="no">Ecto</span><span class="o">.</span><span class="no">Query</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="ss">org_id:</span> <span class="o">^</span><span class="n">org_id</span><span class="p">),</span> <span class="n">opts</span><span class="p">}</span>
+
+      <span class="no">true</span> <span class="o">-&gt;</span>
+        <span class="k">raise</span> <span class="s2">"expected org_id or skip_org_id to be set"</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+ <span class="err">2</span><span class="n">nd</span></code></pre></figure>
+
+<p>The combinations of approaches here are more explicit and more custom-tailored to the specific problem. This should make writing and maintaining tests much easier. While being perhaps somewhat less elegant, I think this will lend itself to simpler maintenance down the line as this project grows.</p>
+
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Stefan Sahagian</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Stefan Sahagian</li><li><a class="u-email" href="mailto:g.s.sahagian@gmail.com">g.s.sahagian@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/Shaka-n"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">Shaka-n</span></a></li><li><a href="https://www.twitter.com/StefanSahagian"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">StefanSahagian</span></a></li><li><a href="/feed.xml"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#rss"></use></svg> <span>RSS</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>This is my personal website and blog. Here I write about coding and personal projects.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
