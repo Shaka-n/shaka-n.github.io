@@ -1,0 +1,6 @@
+.home--about { display: flex; margin-bottom: 2rem; }
+.home--about__desc p:nth-of-type(1) { padding-top: 2rem; }
+.home--about__desc img { margin-right: 3rem; width: 250px; min-width: 200px; float: left; -webkit-shape-outside: circle(); shape-outside: circle(); }
+@media (max-width: 480px) { .home--about__desc p:nth-of-type(1) { padding-top: 0; }
+  .home--about__desc img { float: none; width: 100%; min-width: 200px; -webkit-shape-outside: circle(); shape-outside: circle(); margin-bottom: 1rem; } }
+.home--portfolio { margin: 2rem 0; }
