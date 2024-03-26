@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>LiveView, Channels, and PubSub | Stefan Sahagian</title>
+<meta name="generator" content="Jekyll v3.9.5" />
+<meta property="og:title" content="LiveView, Channels, and PubSub" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I was recently experimenting with Phoenix Channels and Liveview to learn a bit more about Phoenix. I’m working on another social platform project right now, so I went for a chat app. I noticed that most tutorials used either Phoenix Channels, the official Javascript client and a JS frontend, or Liveview on its own. I wanted to see if I could combine LiveView with Channels. Here’s what I learned. Warning: this isn’t really a tutorial, more of a rambling recapitulation of what’s in the docs, except pointing out what I didn’t get the first time around." />
+<meta property="og:description" content="I was recently experimenting with Phoenix Channels and Liveview to learn a bit more about Phoenix. I’m working on another social platform project right now, so I went for a chat app. I noticed that most tutorials used either Phoenix Channels, the official Javascript client and a JS frontend, or Liveview on its own. I wanted to see if I could combine LiveView with Channels. Here’s what I learned. Warning: this isn’t really a tutorial, more of a rambling recapitulation of what’s in the docs, except pointing out what I didn’t get the first time around." />
+<link rel="canonical" href="http://localhost:4000/2024/03/20/liveview-channels-and-pubsub.html" />
+<meta property="og:url" content="http://localhost:4000/2024/03/20/liveview-channels-and-pubsub.html" />
+<meta property="og:site_name" content="Stefan Sahagian" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-03-20T00:00:00-04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="LiveView, Channels, and PubSub" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2024-03-20T00:00:00-04:00","datePublished":"2024-03-20T00:00:00-04:00","description":"I was recently experimenting with Phoenix Channels and Liveview to learn a bit more about Phoenix. I’m working on another social platform project right now, so I went for a chat app. I noticed that most tutorials used either Phoenix Channels, the official Javascript client and a JS frontend, or Liveview on its own. I wanted to see if I could combine LiveView with Channels. Here’s what I learned. Warning: this isn’t really a tutorial, more of a rambling recapitulation of what’s in the docs, except pointing out what I didn’t get the first time around.","headline":"LiveView, Channels, and PubSub","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2024/03/20/liveview-channels-and-pubsub.html"},"url":"http://localhost:4000/2024/03/20/liveview-channels-and-pubsub.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Stefan Sahagian" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Stefan Sahagian</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a><a class="page-link" href="/resume/">Resume</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <h1>LiveView, Channels, and PubSub</h1>
+<p>20 Mar 2024 - </p>
+
+<p>I was recently experimenting with Phoenix Channels and Liveview to learn a bit more about Phoenix. I’m working on another social platform project right now, so I went for a chat app. I noticed that most tutorials used either Phoenix Channels, the official Javascript client and a JS frontend, or Liveview on its own. I wanted to see if I could combine LiveView with Channels. Here’s what I learned. Warning: this isn’t really a tutorial, more of a rambling recapitulation of what’s in the docs, except pointing out what I didn’t get the first time around.</p>
+
+<p>TL;DR/Oversimplification: <a href="https://hexdocs.pm/phoenix/channels.html">Channels</a> let things outside your Phoenix app connect to your PubSub system via websocket. One Channel process per client, a Channel process for every client. A <a href="https://hexdocs.pm/phoenix_live_view/welcome.html">LiveView</a> is an Elixir process as well that maintains a websocket connection and sends server-rendered html to a browser client. LiveViews can also communicate with Channels via <a href="https://hexdocs.pm/phoenix_pubsub/2.1.3/Phoenix.PubSub.html">PubSub</a>. These processes communicate via broadcast and then render (or don’t) the message data to their respective clients.</p>
+
+<p>Right off the bat, this is not a normal way of doing things. Phoenix Channels and Liveview are two great tools that were built for two adjacent but different things and you wouldn’t necessarily want to use them side by side like this. A Phoenix Channel is a high-level abstraction of the PubSub (Publisher/Subscriber) system paired with a websocket connection that allows clients to connect with your Phoenix application. LiveView is a framework for delivering real-time, server-rendered HTML to browser clients via websocket connection. Under the hood, a LiveView is an Elixir process with some additional callbacks. A Channel is an Elixir process with additional callbacks. Note that when I say process, I really mean <a href="https://hexdocs.pm/elixir/1.12/GenServer.html">GenServer</a>, but I find the term can make it hard to explain things to people who are new to Elixir. Channels use websockets. LiveViews use websockets. Channels have clients. LiveViews have clients. Though aimed at different use cases, these two concepts are interesting and not wholly imcompatible, and that’s reason enough to experiment with them.</p>
+
+<p>One thing to note is that when a client connects to a Channel it usually must authenticate via some logic in the Channel’s join/3 callback. I find the verb “join” somewhat misleading, particularly in the chat application example scenario. The client is “join”-ing the conversation of the chosen PubSub topic, but there is only one Channel process per client. Multiple clients are <strong>not</strong> connecting to a single Channel. In contrast, The LiveView process, being native to the application, does not need to authenticate to “join” the chat, it simply subscribes to the same PubSub topic. To be more specific, it is to be assumed that if a user is able to view the LiveView page then it follows that their session would have already been authenticated in some way. Even if your application had the concept of a private or channel that required additional authentication to view from a LiveView, that authentication would be done via the Plug pipeline and not when the LiveView renders. This may seem obvious, but I found it a little confusing at first.</p>
+
+<p>The key for my understarnding was getting to better know the PubSub system and how a Channel interacts with it. To repeat, a Channel is a process that acts as a link between a client and the rest of an Elixir application. A client could be a JavaScript application running in a browser, a desktop application, an IoT device, etc. It’s any program that is not part of the Elixir application itself. When a client connects (which it will do so through some kind of client library), it will first hit the application’s Endpoint (yet another GenServer) which will then route the client to the requested Channel. A new Channel process is then spawned for that client. One channel process per client. The Channel process will maintain any state regarding the connection and subscribe to the PubSub topic initially requested by the client. The Channel process will then monitor for any messages that are broadcast on that topic. Depending on how the event handlers are implemented, the Channel will determine what to do with each message it receives, and can push them back down to the client. When a Channel process receives a message from the client, it can then broadcast that data through the PubSub system to subscribers of that topic, whether they be other Channel processes, LiveView processes, or any other process in the application.</p>
+
+<p>Liveview on the other hand is relatively simple. It renders an initial html response when the page loads, then upgrades to a stateful view (via websocket) when the load is complete. When socket assigns (i.e. variables) or the stateful view changes the view re-renders those parts that change. Event handlers implemented in the serverside determine the specific behavior of the stateful view. It can also do all the things that any nother Elixir process can do, meaning send and receive messages. Via PubSub subscription the LiveView can listen for events broadcast on a chosen topic and then handle those events as you see fit, typically by updating socket assigns and triggering a re-paint of the affected area of the DOM. Unhandled events will be ignored and dropped through the default GenServer implementations that LiveView (and Channels) are built on.</p>
+
+<p>Something that I kept tripping over is the fact that every LiveView and Channel is on equal footing. When you broadcast an event to the PubSub you are not trying to send an event to the Channel or the LiveView to then re-broadcast it. You are simply telling the PubSub “hey, tell all subscribers of this topic that this event happened.” If you don’t want the sending process to get its own message back, you can use <code class="language-plaintext highlighter-rouge">broadcast_from/5</code>.</p>
+
+<p>In this one, I mostly learned how <em>not</em> to use PubSub. Shoutout to these DWYL tutorials (<a href="https://github.com/dwyl/phoenix-chat-example">Channels tutorial</a>, <a href="https://github.com/dwyl/phoenix-liveview-chat-example">LiveView tutorial</a>) that I Frankenstein-ed together for this one. If you’re wondering why I didn’t just follow these two more closely, I find that I learn best from taking the unhappy path. You can <a href="https://github.com/Shaka-n/demo-chat-app">check out the code here</a>, it’s a mess and I’m not sorry. Tune in next time, whenever that is, as I add in authentication, room navigation, and potentially a non-browser client.</p>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Stefan Sahagian</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Stefan Sahagian</li><li><a class="u-email" href="mailto:g.s.sahagian@gmail.com">g.s.sahagian@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/Shaka-n"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">Shaka-n</span></a></li><li><a href="https://www.twitter.com/StefanSahagian"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">StefanSahagian</span></a></li><li><a href="/feed.xml"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#rss"></use></svg> <span>RSS</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>This is my personal website and blog. Here I write about coding and personal projects.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+  <script type="text/javascript" src="https://rawgit.com/patriciogonzalezvivo/glslCanvas/master/dist/GlslCanvas.js"></script>
+</html>
